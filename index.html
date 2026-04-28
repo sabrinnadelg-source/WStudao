@@ -938,7 +938,47 @@
       <span>Total</span>
       <span id="cartTotal">R$ 0,00</span>
     </div>
-    <button class="checkout-btn" onclick="checkout()">✅ Finalizar Compra</button>
+    <div style="margin-bottom:15px">
+  <input id="nome" placeholder="Nome completo" required>
+  <input id="email" placeholder="Email" required>
+  <input id="telefone" placeholder="Telefone" required>
+  <input id="endereco" placeholder="Endereço completo" required>
+</div>
+    async function checkout() {
+  if (cart.length === 0) {
+    showToast('⚠️ Carrinho vazio!');
+    return;
+  }
+
+  const customer = {
+    nome: document.getElementById("nome").value,
+    email: document.getElementById("email").value,
+    telefone: document.getElementById("telefone").value,
+    endereco: document.getElementById("endereco").value
+  };
+
+  if (!customer.nome || !customer.endereco) {
+    showToast("Preencha os dados!");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ customer, cart })
+    });
+
+    const data = await res.json();
+
+    window.location.href = data.checkout_url;
+
+  } catch (err) {
+    showToast("Erro no pagamento");
+  }
+}
   </div>
 </div>
 
