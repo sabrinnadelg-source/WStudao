@@ -1,4 +1,4 @@
-# 🛒 Wstudao — Loja Dropshipping Automatizada
+# 🛒 Wstudao
 
 Sistema completo de loja online com:
 
