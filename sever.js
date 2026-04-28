@@ -79,6 +79,36 @@ app.post("/webhook", (req, res) => {
 
   res.sendStatus(200);
 });
+/* ======================================
+📦 PAINEL ADMIN (ROTAS)
+====================================== */
+
+// LISTAR PEDIDOS
+app.get("/orders", (req, res) => {
+  if (!fs.existsSync(DB_FILE)) return res.json([]);
+  const data = JSON.parse(fs.readFileSync(DB_FILE));
+  res.json(data);
+});
+
+// ATUALIZAR STATUS
+app.post("/orders/update", (req, res) => {
+  const { id, status } = req.body;
+
+  if (!fs.existsSync(DB_FILE)) return res.sendStatus(404);
+
+  const data = JSON.parse(fs.readFileSync(DB_FILE));
+
+  const updated = data.map(order => {
+    if (order.id == id) {
+      return { ...order, status };
+    }
+    return order;
+  });
+
+  fs.writeFileSync(DB_FILE, JSON.stringify(updated, null, 2));
+
+  res.json({ success: true });
+});
 
 /* ======================================
 🚀 SERVER
