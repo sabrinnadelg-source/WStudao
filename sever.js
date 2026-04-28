@@ -12,7 +12,7 @@ mercadopago.configure({
   access_token: "SEU_ACCESS_TOKEN"
 });
 
-// BANCO SIMPLES (arquivo)
+// BANCO SIMPLES
 const DB_FILE = "./orders.json";
 
 function saveOrder(order) {
@@ -24,7 +24,9 @@ function saveOrder(order) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-// CRIAR PEDIDO + PAGAMENTO
+/* ======================================
+🛒 CHECKOUT (AGORA CORRETO)
+====================================== */
 app.post("/checkout", async (req, res) => {
   try {
     const { customer, cart } = req.body;
@@ -45,6 +47,10 @@ app.post("/checkout", async (req, res) => {
         quantity: item.qty,
         unit_price: 10
       })),
+
+      // 🔔 WEBHOOK AQUI
+      notification_url: "https://SEU-LINK-NGROK/webhook",
+
       back_urls: {
         success: "http://localhost:5500/success.html",
         failure: "http://localhost:5500/error.html"
@@ -64,4 +70,19 @@ app.post("/checkout", async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
+/* ======================================
+🔔 WEBHOOK
+====================================== */
+app.post("/webhook", (req, res) => {
+  console.log("🔔 WEBHOOK RECEBIDO:");
+  console.log(req.body);
+
+  res.sendStatus(200);
+});
+
+/* ======================================
+🚀 SERVER
+====================================== */
+app.listen(3000, () => {
+  console.log("🚀 Servidor rodando em http://localhost:3000");
+});
